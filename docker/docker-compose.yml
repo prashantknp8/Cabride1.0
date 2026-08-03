@@ -1,0 +1,51 @@
+services:
+
+  mysql:
+    image: mysql:8.4
+    container_name: cabride-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - cabride-network
+
+  redis:
+    image: redis:7.4
+    container_name: cabride-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    networks:
+      - cabride-network
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: cabride-rabbitmq
+    restart: unless-stopped
+
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    networks:
+      - cabride-network
+
+volumes:
+  mysql_data:
+
+networks:
+  cabride-network:
