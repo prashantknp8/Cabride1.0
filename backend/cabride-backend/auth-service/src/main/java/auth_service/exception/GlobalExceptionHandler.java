@@ -38,16 +38,20 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler(InvalidCredentialException.class)
+    @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ApiResponse<Void>> handleInvalidCredentials(
-            InvalidCredentialException ex) {
+            InvalidCredentialsException ex) {
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.<Void>builder()
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
+                .message(ex.getMessage())
+                .data(null)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(response);
     }
 
     @ExceptionHandler(AccountLockedException.class)

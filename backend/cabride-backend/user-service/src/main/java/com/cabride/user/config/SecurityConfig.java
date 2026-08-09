@@ -1,29 +1,21 @@
-package auth_service.config;
+package com.cabride.user.config;
 
-import auth_service.security.JwtAuthenticationFilter;
+import com.cabride.user.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableMethodSecurity
-public class SecurityBeansConfig {
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+@RequiredArgsConstructor
+public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -33,7 +25,6 @@ public class SecurityBeansConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
-                // JWT = stateless authentication
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -42,23 +33,12 @@ public class SecurityBeansConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Authentication endpoints
                         .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login"
+                                "/actuator/health"
                         ).permitAll()
 
-                        // Swagger
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                        ).permitAll()
-
-                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
-
-                .httpBasic(Customizer.withDefaults())
 
                 .addFilterBefore(
                         jwtAuthenticationFilter,
